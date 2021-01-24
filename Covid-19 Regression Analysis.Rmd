@@ -1,0 +1,68 @@
+---
+title: "<center><u>Covid-19 Regression Analysis</u></center>"
+author: "Chung Tran"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***
+## <u>Introduction</u>
+Covid has seen rapid spread across the globe at a calamitous scale. While the nature of this respiratory disease is under intense investigation, answers to many key areas still lack coherence ranging from the symptoms involved to neurological complications. Open ended research has been highly emphasized to accelerate progress in Covid-19 research. It is thanks to proposals made by governments and the scientific teams that has made tackling key problems highly accessible to anyone interested. The high accessibility of these research problems is in large part due to the <i>data-driven</i> nature of these research problems; Anyone eager to dive in various datasets and start analyzing can try and help out on some problems. 
+
+
+<br>Many open-ended problems have a similar framework: Using data, can we infer or deduce any useful information? To illustrate this, a figure is plotted showing the relative search intensities over time between the year 2019-2020. We pretend a Google algorithm has detected anomalies in these specific search terms. 
+
+```{r, echo=FALSE,message=FALSE,fig.align='center',out.extra='angle=90'}
+library(ggplot2)
+library(gtrendsR)
+library(dplyr)
+
+keywords <-c("Loss of taste","Loss of smell","Cough medicine")
+results <- gtrends(keywords,geo = "US",time = "2019-12-01 2021-01-01")
+
+Interest_over_time <-function(results, ...) {
+  search_results <- results$interest_over_time
+  search_results$date <-as.Date(search_results$date)
+  search_results$hits <- if(typeof(search_results$hits) == 'character'){
+    as.numeric(gsub('<','',search_results$hits))
+    #In some results, need to replace character < as no numeric provided for values <1
+  }
+  else {
+    search_results$hits
+  }
+  
+  search_results$legend <-paste(search_results$keyword,sep = " ")
+  
+
+plot <- ggplot(search_results, aes_string(x="date",y="hits", color="legend")) +
+  geom_line() +
+  xlab("Date") +
+  ylab("Search score") +
+  ggtitle("Google Search Index: Covid Symptoms (US)") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust =0.5),legend.title = element_blank()) 
+
+plot
+}
+
+Interest_over_time(results)
+
+
+```
+<font size = 2><center><b>Figure 1</b> - Google search trends (Relative intensity) of Three common covid symptoms over the years 2020 and 2021.</center></font>
+
+<br>Assuming no prior knowledge of various symptoms, this graph holds a lot of useful stories and information  that even with such simple data, we have potential to read into Covid-19, raise key questions and provide <b><i>confidence</i></b>.
+
+* Why did the sharpest rise occur around April 2020?
+* Can we predict an outbreak much sooner given information of rising baseline levels?
+* How can we explain all predominant peaks and their respective Q-factors?
+* Given search results, how confident can we be that Loss of smell + taste are more prevalent symptoms than a cough in patients?
+* Given similar distributions of Smell+taste, do these symptoms occur simultaneously? <br>
+<br>....and many more.  Given how ubiquitous and varied data can be, we can see how powerful data can be. 
+
+## <u>Problem and Context</u>
+
+
